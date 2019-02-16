@@ -1,0 +1,6 @@
+[submodule "Software/Arduino Libraries/arduino-nbiot-sdk"]
+	path = Software/Arduino Libraries/arduino-nbiot-sdk
+	url = https://github.com/allthingstalk/arduino-nbiot-sdk
+[submodule "Software/Arduino Libraries/arduino-nbiot-rdk"]
+	path = Software/Arduino Libraries/arduino-nbiot-rdk
+	url = https://github.com/allthingstalk/arduino-nbiot-rdk
