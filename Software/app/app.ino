@@ -1,10 +1,12 @@
-#include <app_defs.h>
+#include <stdio.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <app_defs.h>
 #include <ATT_GPS.h>
 #include <ATT_NBIOT.h>
 #include <Wire.h>
-#include <stdio.h>
-#include <stdbool.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
 
 #define DEBUG_STREAM      APP_DEFS_DEBUG_STREAM
 #define MODEM_STREAM      APP_DEFS_MODEM_STREAM
@@ -14,9 +16,11 @@
 
 /* --------- GLOBALS --------- */
 void uploadData();
+void printDebugData();
 
-ATT_NBIOT device;
-ATT_GPS   gps(20u, 21u);
+ATT_NBIOT       device;
+ATT_GPS         gps(20u, 21u);
+Adafruit_BME280 bme;
 /* --------------------------- */
 
 #if (APP_DEFS_USE_CBOR == 1u)
@@ -70,6 +74,19 @@ setup()
         DEBUG_STREAM.println("Failed to read coordinates, sending defaults.");
     }
 
+    /* Initialize TPH v2 module */
+    err = bme.begin();
+    if (err == true)
+    {
+        DEBUG_STREAM.println("BME sensor found");
+    }
+    else
+    {
+        DEBUG_STREAM.println("BME sensor not found");
+        delay(100u);
+        exit(EXIT_FAILURE);
+    }
+
     DEBUG_STREAM.println("/* --------- SETUP COMPLETE ---------- */");
 
     /* Print the name of the program */
@@ -87,11 +104,8 @@ loop()
 {
     /* put your main code here, to run repeatedly: */
     gps.readCoordinates();
-
-    DEBUG_STREAM.println("Latitude:   " + (const String)gps.latitude);
-    DEBUG_STREAM.println("Longitude:  " + (const String)gps.longitude);
-
     uploadData();
+    printDebugData();
 
     delay(DELAY_TIME);
     
@@ -105,13 +119,39 @@ uploadData()
     DEBUG_STREAM.println("Upload starting");
     payload.reset();
 
-    payload.map(1);
+    payload.map(4);
     payload.addGPS(gps.latitude, gps.longitude, gps.altitude, "gps");
+    payload.addNumber(bme.readTemperature(),                  "temperature");
+    payload.addNumber(bme.readHumidity(),                     "humidity");
+    payload.addNumber(bme.readPressure() / 100.0f,            "pressure");
 
     payload.send();
     
     DEBUG_STREAM.println("Upload completed");
     digitalWrite(LED1, LOW);
+
+    return;
+}
+
+void
+printDebugData()
+{
+    DEBUG_STREAM.write(27);
+    DEBUG_STREAM.print("[2J");
+    DEBUG_STREAM.write(27);
+    DEBUG_STREAM.print("[H");
+
+    /* Print the name of the program */
+    DEBUG_STREAM.println("/* -------------------------------------- */");
+    DEBUG_STREAM.println("/* ---------- PXL AIR QUALLITY ---------- */");
+    DEBUG_STREAM.println("/* ------------ DEBUG SCREEN ------------ */");
+    DEBUG_STREAM.println("/* -------------------------------------- */");
+
+    DEBUG_STREAM.println("Latitude:    " + (const String)gps.latitude);
+    DEBUG_STREAM.println("Longitude:   " + (const String)gps.longitude);
+    DEBUG_STREAM.println("Temperature: " + (const String)bme.readTemperature()        + "*C");
+    DEBUG_STREAM.println("Humidity:    " + (const String)bme.readHumidity()           + "%");
+    DEBUG_STREAM.println("Pressure:    " + (const String)(bme.readPressure() / 100.f) + "hPa");
 
     return;
 }
