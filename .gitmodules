@@ -4,3 +4,6 @@
 [submodule "Software/Arduino Libraries/arduino-nbiot-rdk"]
 	path = Software/Arduino Libraries/arduino-nbiot-rdk
 	url = https://github.com/allthingstalk/arduino-nbiot-rdk
+[submodule "Software/Arduino_Libraries/arduino-nbiot-rdk"]
+	path = Software/Arduino_Libraries/arduino-nbiot-rdk
+	url = https://github.com/allthingstalk/arduino-nbiot-rdk.git
