@@ -1,4 +1,4 @@
-![PXL University College Logo][PXL-logo]
+[![PXL University College Logo][PXL-logo]][PXL-link]
 
 # PXL University College Air Quality Project 
 Repo for NB-IoT Air Quality Project
@@ -12,3 +12,4 @@ Repo for NB-IoT Air Quality Project
 Vincent Claes
 
 [PXL-logo]: ./Misc/images/pxl-logo.png "PXL logo"
+[PXL-link]: https://www.pxl.be
