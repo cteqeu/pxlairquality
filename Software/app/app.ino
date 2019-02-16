@@ -10,28 +10,36 @@
 #define MODEM_STREAM      APP_DEFS_MODEM_STREAM
 #define MODEM_ON_OFF_PIN  APP_DEFS_MODEM_ON_OFF_PIN
 
-#if (APP_DEFS_USE_CBOR == 1u)
-#include <CborBuilder.h>
-#endif
-
-#if (APP_DEFS_USE_BINARY == 1u)
-#include <PayloadBuilder.h>
-#endif
+#define DELAY_TIME        60000u
 
 /* --------- GLOBALS --------- */
+void uploadData();
+
 ATT_NBIOT device;
-ATT_GPS   gps(20, 21);
+ATT_GPS   gps(20u, 21u);
 /* --------------------------- */
 
+#if (APP_DEFS_USE_CBOR == 1u)
+    #include <CborBuilder.h>
+    CborBuilder payload(device);
+#elif (APP_DEFS_USE_BINARY == 1u)
+    #include <PayloadBuilder.h>
+    PayloadBuilder payload(device);
+#else
+    #error At least one way to format the data has to be defined!
+#endif
+
 void
-setup() {
+setup()
+{
     /* put your setup code here, to run once: */
-    delay(500);
+    delay(500u);
+    pinMode(LED1, OUTPUT);
+    digitalWrite(LED1, HIGH);
 
     volatile static bool err = false;
-
-    DEBUG_STREAM.begin(57600);
-    MODEM_STREAM.begin(9600);
+    DEBUG_STREAM.begin(57600u);
+    MODEM_STREAM.begin(9600u);
 
     DEBUG_STREAM.println("/* ---------- INITIALIZING AND CONNECTING ---------- */");
 
@@ -47,40 +55,63 @@ setup() {
     {
         DEBUG_STREAM.println("/* ---------- CONNECTION FAILED ---------- */");
         DEBUG_STREAM.println("Failed to connect to device");
-        delay(100);
+        delay(100u); /* Using a delay here otherwise the Serial stream will not have enough time to print the message */
         exit(EXIT_FAILURE); 
     }
+
+    /* Initialize the GPS module */
+    err = gps.readCoordinates(30u);
+    if (err == true)
+    {
+        DEBUG_STREAM.println("Coordinates read successfully.");
+    }
+    else
+    {
+        DEBUG_STREAM.println("Failed to read coordinates, sending defaults.");
+    }
+
+    DEBUG_STREAM.println("/* --------- SETUP COMPLETE ---------- */");
 
     /* Print the name of the program */
     DEBUG_STREAM.println("/* -------------------------------------- */");
     DEBUG_STREAM.println("/* ---------- PXL AIR QUALLITY ---------- */");
     DEBUG_STREAM.println("/* -------------------------------------- */");
 
-    /* Initialize the GPS module */
-    err = gps.readCoordinates(30);
-    if (err == true)
-    {
-        DEBUG_STREAM.println("Sending initial fix");
-    }
-    else
-    {
-        DEBUG_STREAM.println("No fix found. sending default");
-    }
-
-    DEBUG_STREAM.println("/* --------- SETUP COMPLETE ---------- */");
+    digitalWrite(LED1, LOW);
 
     return;
 }
 
 void
-loop() {
+loop()
+{
     /* put your main code here, to run repeatedly: */
     gps.readCoordinates();
 
     DEBUG_STREAM.println("Latitude:   " + (const String)gps.latitude);
     DEBUG_STREAM.println("Longitude:  " + (const String)gps.longitude);
 
-    delay(500);
+    uploadData();
+
+    delay(DELAY_TIME);
     
+    return;
+}
+
+void
+uploadData()
+{
+    digitalWrite(LED1, HIGH);
+    DEBUG_STREAM.println("Upload starting");
+    payload.reset();
+
+    payload.map(1);
+    payload.addGPS(gps.latitude, gps.longitude, gps.altitude, "gps");
+
+    payload.send();
+    
+    DEBUG_STREAM.println("Upload completed");
+    digitalWrite(LED1, LOW);
+
     return;
 }
