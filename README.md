@@ -11,4 +11,4 @@ Repo for NB-IoT Air Quality Project
 
 Vincent Claes
 
-[PXL-logo]: https://www.pxl.be/Assets/website/pxl_algemeen/afbeeldingen/grotere_versie/1314_logo_pxl_bol.png "PXL logo"
+[PXL-logo]: ./Misc/images/pxl-logo.png "PXL logo"
