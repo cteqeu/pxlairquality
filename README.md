@@ -1,15 +1,21 @@
+# PXL University College Air Quality Project 
+
 [![PXL University College Logo][PXL-logo]][PXL-link]
 
-# PXL University College Air Quality Project 
+## Table of Contents
+
+## Introduction
+
 Repo for NB-IoT Air Quality Project
 
-- General contains the slides, datasheets,...
+- General contains the slides, data sheets,...
 - Hardware contains information about the hardware
 - Software contains information about the software, example projects,...
 
+## Contributors
 
-
-Vincent Claes
+* Vincent Claes
+* Bryan Honof
 
 [PXL-logo]: ./Misc/images/pxl-logo.png "PXL logo"
 [PXL-link]: https://www.pxl.be
