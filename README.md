@@ -7,5 +7,5 @@ Repo for NB-IoT Air Quality Project
 
 
 
-Vincent Claes
+Vincent Claes  
 Bryan Honof
