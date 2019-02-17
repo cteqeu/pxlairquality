@@ -1,24 +1,43 @@
 #!/bin/sh
 
-method="$7";
-device_id="$1";
+url="https://api.allthingstalk.io";
+authorization="${ALLTHINGSAPI_AUTHORIZATION}";
+device_id="${ALLTHINGSAPI_DEVICE_ID}";
+
+method="$1";
 asset="$2";
-authorization="$6";
 from="$3"
 to="$4"
 page="$5"
-url="https://api.allthingstalk.io";
 
-
-curlGet ()
+curlGet()
 {
-    curl -X GET "${url}/device/${device_id}/asset/${asset}/states?from=${from}&to=${to}&page=${page}" \
+    curl -X ${method} "${url}/device/${device_id}/asset/${asset}/states?from=${from}&to=${to}&page=${page}" \
          -H "Authorization: Bearer ${authorization}"
 }
 
+usage()
+{
+    echo "To use this script first export the environment variables:"
+    echo "    - ALLTHINGSAPI_DEVICE_ID={your device id}"
+    echo "    - ALLTHINGSAPI_AUTHORIZATION={your authorization key}"
+    echo "Or edit these variables directly in the script."
+}
+
 if [ "$#" -ge 1 ]; then
-    curlGet
+    case "$1" in
+        "GET")
+            curlGet
+            ;;
+        "POST")
+            echo "Not yet implemented"
+            ;;
+        *)
+            usage
+            exit 1
+    esac
 else
     echo "No arguments supplied"
     exit
 fi
+
