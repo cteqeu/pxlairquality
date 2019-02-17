@@ -22,8 +22,13 @@ Software  Contains information about the software, example projects,...
 
 ## Contributors
 
-- Vincent Claes
-- Bryan Honof
+- [Vincent Claes][Vincent-linkedin]
+- [Bryan Honof][Bryan-linkedin]
+
 
 [PXL-logo]: ./Misc/images/pxl-logo.png "PXL logo"
 [PXL-link]: https://www.pxl.be
+[Vincent-linkedin]: https://www.linkedin.com/in/vincentclaes/
+[Vincent-mail]: Vicent.Claes@pxl.be
+[Bryan-linkedin]: https://www.linkedin.com/in/bryan-honof/
+[Bryan-mail]: Bryan.Honof@student.pxl.be
