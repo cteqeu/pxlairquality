@@ -10,23 +10,28 @@ from="$3"
 to="$4"
 page="$5"
 
+today="$(date --iso-8601)"
+yesterday="$(date --iso-8601 -d "yesterday")"
+
 curlGet()
 {
     case "$from" in
+        # Get the latest known value of the asset.
         "latest")
             curl -X ${method} "${url}/device/${device_id}/asset/${asset}/state" \
                  -H "Authorization: Bearer ${authorization}"
             ;;
-        "arregated")
+        # Get the aggregated value.
+        "aggregated")
             curl -X ${method} "${url}/device/${device_id}/asset/${asset}/states?resolution=day&from=${from}&to=${to}" \
                  -H "Authorization: Bearer ${authorization}"
             ;;
+        # All other cases will evaluate to use a range from yesterdays date to today and display page 0.
         *)
-            curl -X ${method} "${url}/device/${device_id}/asset/${asset}/states?from=${from}&to=${to}&page=${page}" \
+            curl -X ${method} "${url}/device/${device_id}/asset/${asset}/states?from=${yesterday}&to=${today}&page=0" \
                  -H "Authorization: Bearer ${authorization}"
             ;;
     esac
-
 }
 
 usage()
@@ -50,7 +55,7 @@ if [ "$#" -ge 1 ]; then
             exit 1
     esac
 else
-    echo "No arguments supplied"
-    exit
+    usage
+    exit 1
 fi
 
