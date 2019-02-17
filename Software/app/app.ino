@@ -7,12 +7,13 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
+#include <DS3231.h>
 
 #define DEBUG_STREAM      APP_DEFS_DEBUG_STREAM
 #define MODEM_STREAM      APP_DEFS_MODEM_STREAM
 #define MODEM_ON_OFF_PIN  APP_DEFS_MODEM_ON_OFF_PIN
 
-#define DELAY_TIME        60000u
+#define DELAY_TIME        300000u
 
 /* --------- GLOBALS --------- */
 void uploadData();
@@ -20,7 +21,23 @@ void printDebugData();
 
 ATT_NBIOT       device;
 ATT_GPS         gps(20u, 21u);
+DS3231          rtc;
 Adafruit_BME280 bme;
+
+static uint32_t curTime = 0u;
+static uint32_t ctime = 0u;
+static bool century = false;
+
+typedef struct dateTime
+{
+    uint8_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t dow;
+    uint8_t hours;
+    uint8_t Minutes;
+    uint8_t seconds;
+} dateTime_t;
 /* --------------------------- */
 
 #if (APP_DEFS_USE_CBOR == 1u)
@@ -42,6 +59,8 @@ setup()
     digitalWrite(LED1, HIGH);
 
     volatile static bool err = false;
+
+    Wire.begin();
     DEBUG_STREAM.begin(57600u);
     MODEM_STREAM.begin(9600u);
 
@@ -103,11 +122,16 @@ void
 loop()
 {
     /* put your main code here, to run repeatedly: */
-    gps.readCoordinates();
-    uploadData();
-    printDebugData();
+    curTime = millis() + DELAY_TIME;
 
-    delay(DELAY_TIME);
+    if (curTime > (ctime + DELAY_TIME))
+    {
+        gps.readCoordinates();
+        uploadData();
+        printDebugData();
+
+        ctime = curTime;
+    }
     
     return;
 }
@@ -146,7 +170,9 @@ printDebugData()
     DEBUG_STREAM.println("/* ---------- PXL AIR QUALLITY ---------- */");
     DEBUG_STREAM.println("/* ------------ DEBUG SCREEN ------------ */");
     DEBUG_STREAM.println("/* -------------------------------------- */");
-
+    DEBUG_STREAM.print(rtc.getYear(), DEC);
+    DEBUG_STREAM.print(rtc.getMonth(century), DEC);
+    DEBUG_STREAM.print(rtc.getDate(), DEC);
     DEBUG_STREAM.println("Latitude:    " + (const String)gps.latitude);
     DEBUG_STREAM.println("Longitude:   " + (const String)gps.longitude);
     DEBUG_STREAM.println("Temperature: " + (const String)bme.readTemperature()        + "*C");
