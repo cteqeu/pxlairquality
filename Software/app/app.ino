@@ -1,3 +1,6 @@
+#include <App.h>
+#include <app_defs.h>
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -20,10 +23,10 @@
 void uploadData();
 void printDebugData();
 
-ATT_NBIOT       device;
-ATT_GPS         gps(20u, 21u);
-DS3231          rtc;
-Adafruit_BME280 bme;
+//ATT_NBIOT       device;
+//ATT_GPS         gps(20u, 21u);
+//DS3231          rtc;
+//Adafruit_BME280 bme;
 
 static uint32_t curTime = 0u;
 static uint32_t ctime = 0u;

@@ -1,19 +1,21 @@
 #ifndef APP_H
 #define APP_H
 
-#include <arduino.h>
+#include <Arduino.h>
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <app_defs.h>
 #include <ATT_GPS.h>
 #include <ATT_NBIOT.h>
 #include <Wire.h>
-#include <Adafruit_Sensor.h> #include <Adafruit_BME280.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
 #include <DS3231.h>
 
 namespace pxl
 {
-    using struct DateTime
+    typedef struct DateTime
     {
         uint8_t year;
         uint8_t month;
@@ -31,26 +33,25 @@ namespace pxl
             App(void);
             ~App(void);
 
-            uploadData(void);
-            printDebugData(void);
+            void uploadData(void);
+            void printDebugData(void);
 
             /* ----------  Getters ---------- */
-            getDateTime(void);
+            dateTime_t getDateTime(void);
 
             /* ----------  Setters ---------- */
-            setDateTime(dateTime_t dateTime);
+            uint8_t setDateTime(dateTime_t dateTime);
 
         private:
             /* ---------- Class variables  ----------  */
-            static ATT_NBIOT       device;
-            static ATT_GPS         gps(APP_DEFS_GPS_RX_PIN, APP_DEFS_GPS_TX_PIN);
-            static DS3231          rtc;
-            static Adafruit_BME280 bme;
-            static dateTime_t      dateTime;
+            static uint32_t curTime;
+            static uint32_t ctime;
+            static bool     century;
 
-            static uint32_t curTime = 0u;
-            static uint32_t ctime   = 0u;
-            static bool     century = false;
+            ATT_NBIOT       device;
+            ATT_GPS         gps;
+            DS3231          rtc;
+            Adafruit_BME280 bme;
     };
 };
 
