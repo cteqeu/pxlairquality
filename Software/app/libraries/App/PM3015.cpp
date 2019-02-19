@@ -1,6 +1,6 @@
 #include "PM3015.h"
 
-sensors::PM3015::PM3015() : particleSerial(APP_DEFS_PARTICLE_TX_PIN, APP_DEFS_PARTICLE_RX_PIN)
+sensors::PM3015::PM3015() : particleSerial(APP_DEFS_PARTICLE_RX_PIN, APP_DEFS_PARTICLE_TX_PIN)
 {
     baudRate = APP_DEFS_PARTICLE_BAUD;
     particleSerial.begin(baudRate);
