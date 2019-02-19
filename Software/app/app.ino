@@ -14,6 +14,7 @@
 #define MODEM_ON_OFF_PIN  APP_DEFS_MODEM_ON_OFF_PIN
 
 #define DELAY_TIME        300000u
+#define STARTUP_DELAY     500u
 
 /* --------- GLOBALS --------- */
 void uploadData();
@@ -27,17 +28,6 @@ Adafruit_BME280 bme;
 static uint32_t curTime = 0u;
 static uint32_t ctime = 0u;
 static bool century = false;
-
-typedef struct dateTime
-{
-    uint8_t year;
-    uint8_t month;
-    uint8_t day;
-    uint8_t dow;
-    uint8_t hours;
-    uint8_t Minutes;
-    uint8_t seconds;
-} dateTime_t;
 /* --------------------------- */
 
 #if (APP_DEFS_USE_CBOR == 1u)
@@ -54,9 +44,8 @@ void
 setup()
 {
     /* put your setup code here, to run once: */
-    delay(500u);
+    delay(STARTUP_DELAY);
     pinMode(LED1, OUTPUT);
-    digitalWrite(LED1, HIGH);
 
     volatile static bool err = false;
 
@@ -84,7 +73,7 @@ setup()
 
     /* Initialize the GPS module */
     err = gps.readCoordinates(30u);
-    if (err == true)
+    if (err != true)
     {
         DEBUG_STREAM.println("Coordinates read successfully.");
     }
@@ -107,13 +96,6 @@ setup()
     }
 
     DEBUG_STREAM.println("/* --------- SETUP COMPLETE ---------- */");
-
-    /* Print the name of the program */
-    DEBUG_STREAM.println("/* -------------------------------------- */");
-    DEBUG_STREAM.println("/* ---------- PXL AIR QUALLITY ---------- */");
-    DEBUG_STREAM.println("/* -------------------------------------- */");
-
-    digitalWrite(LED1, LOW);
 
     return;
 }
@@ -139,8 +121,6 @@ loop()
 void
 uploadData()
 {
-    digitalWrite(LED1, HIGH);
-    DEBUG_STREAM.println("Upload starting");
     payload.reset();
 
     payload.map(4);
@@ -150,9 +130,6 @@ uploadData()
     payload.addNumber(bme.readPressure() / 100.0f,            "pressure");
 
     payload.send();
-    
-    DEBUG_STREAM.println("Upload completed");
-    digitalWrite(LED1, LOW);
 
     return;
 }
@@ -160,6 +137,7 @@ uploadData()
 void
 printDebugData()
 {
+    /* Clear the terminal screen */
     DEBUG_STREAM.write(27);
     DEBUG_STREAM.print("[2J");
     DEBUG_STREAM.write(27);
@@ -170,9 +148,8 @@ printDebugData()
     DEBUG_STREAM.println("/* ---------- PXL AIR QUALLITY ---------- */");
     DEBUG_STREAM.println("/* ------------ DEBUG SCREEN ------------ */");
     DEBUG_STREAM.println("/* -------------------------------------- */");
-    DEBUG_STREAM.print(rtc.getYear(), DEC);
-    DEBUG_STREAM.print(rtc.getMonth(century), DEC);
-    DEBUG_STREAM.print(rtc.getDate(), DEC);
+
+    /* Print out latest sensor readings */
     DEBUG_STREAM.println("Latitude:    " + (const String)gps.latitude);
     DEBUG_STREAM.println("Longitude:   " + (const String)gps.longitude);
     DEBUG_STREAM.println("Temperature: " + (const String)bme.readTemperature()        + "*C");
