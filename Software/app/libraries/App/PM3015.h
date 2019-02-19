@@ -21,18 +21,18 @@ namespace sensors
             ~PM3015(void);
 
             uint8_t getMeasurement(void);
-
-        private:
             uint8_t openMeasurement();
             uint8_t closeMeasurement();
-            uint8_t readMeasurement(uint32_t *pm1_0, \
-                                    uint32_t *pm2_5, \
-                                    uint32_t *pm10   \
-                                   );
-            uint8_t isDataValid(const uint8_t *data, size_t size);
-            void    sendCommand(commands command,        \
-                                const uint8_t *response, \
-                                const size_t size        \
+            uint8_t readMeasurements(uint32_t *pm1_0, \
+                                     uint32_t *pm2_5, \
+                                     uint32_t *pm10   \
+                                    );
+
+        private:
+           uint8_t isDataValid(const uint8_t *data, size_t size);
+            void    sendCommand(commands command,  \
+                                uint8_t *response, \
+                                size_t size        \
                                );
 
             SoftwareSerial particleSerial;
