@@ -1,4 +1,5 @@
 #include <App.h>
+#include <PM3015.h>
 #include <app_defs.h>
 
 #include <stdio.h>
@@ -16,7 +17,7 @@
 #define MODEM_STREAM      APP_DEFS_MODEM_STREAM
 #define MODEM_ON_OFF_PIN  APP_DEFS_MODEM_ON_OFF_PIN
 
-#define DELAY_TIME        300000u
+#define DELAY_TIME        30000u
 #define STARTUP_DELAY     500u
 
 /* --------- GLOBALS --------- */
