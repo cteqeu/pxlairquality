@@ -1,4 +1,4 @@
-#include <App.h>
+//#include <App.h>
 #include <PM3015.h>
 #include <app_defs.h>
 
@@ -24,14 +24,19 @@
 void uploadData();
 void printDebugData();
 
-//ATT_NBIOT       device;
-//ATT_GPS         gps(20u, 21u);
-//DS3231          rtc;
-//Adafruit_BME280 bme;
+ATT_NBIOT       device;
+ATT_GPS         gps(20u, 21u);
+DS3231          rtc;
+Adafruit_BME280 bme;
+sensors::PM3015 particleSensor;
 
 static uint32_t curTime = 0u;
-static uint32_t ctime = 0u;
-static bool century = false;
+static uint32_t ctime   = 0u;
+static bool     century = false;
+
+static uint32_t pm1_0 = 0u;
+static uint32_t pm2_5 = 0u;
+static uint32_t pm10  = 0u;
 /* --------------------------- */
 
 #if (APP_DEFS_USE_CBOR == 1u)
@@ -49,7 +54,9 @@ setup()
 {
     /* put your setup code here, to run once: */
     delay(STARTUP_DELAY);
-    pinMode(LED1, OUTPUT);
+    pinMode(LED1,     OUTPUT);
+    pinMode(GROVEPWR, OUTPUT);
+    digitalWrite(GROVEPWR, HIGH);
 
     volatile static bool err = false;
 
@@ -99,6 +106,8 @@ setup()
         exit(EXIT_FAILURE);
     }
 
+    particleSensor.openMeasurement();
+
     DEBUG_STREAM.println("/* --------- SETUP COMPLETE ---------- */");
 
     return;
@@ -113,6 +122,7 @@ loop()
     if (curTime > (ctime + DELAY_TIME))
     {
         gps.readCoordinates();
+        particleSensor.readMeasurements(&pm1_0, &pm2_5, &pm10);
         uploadData();
         printDebugData();
 
@@ -126,8 +136,9 @@ void
 uploadData()
 {
     payload.reset();
-
-    payload.map(4);
+    
+    payload.map(5);
+    payload.addParticle(pm1_0, pm2_5, pm10,    "particle-sensor");
     payload.addGPS(gps.latitude, gps.longitude, gps.altitude, "gps");
     payload.addNumber(bme.readTemperature(),                  "temperature");
     payload.addNumber(bme.readHumidity(),                     "humidity");
@@ -159,6 +170,8 @@ printDebugData()
     DEBUG_STREAM.println("Temperature: " + (const String)bme.readTemperature()        + "*C");
     DEBUG_STREAM.println("Humidity:    " + (const String)bme.readHumidity()           + "%");
     DEBUG_STREAM.println("Pressure:    " + (const String)(bme.readPressure() / 100.f) + "hPa");
-
+    DEBUG_STREAM.println("PM1.0: " + (const String)pm1_0 + " µg/m^3");
+    DEBUG_STREAM.println("PM2.5: " + (const String)pm2_5 + " µg/m^3");
+    DEBUG_STREAM.println("PM10:  " + (const String)pm10  + " µg/m^3");
     return;
 }
