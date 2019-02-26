@@ -6,7 +6,6 @@
 
 ## Introduction
 
-<<<<<<< HEAD
 Repository for the PXL NB-IoT Air Quality Project.
 
 ## Source Roadmap 
@@ -33,7 +32,3 @@ Software  Contains information about the software, example projects,...
 [Vincent-mail]: Vicent.Claes@pxl.be
 [Bryan-linkedin]: https://www.linkedin.com/in/bryan-honof/
 [Bryan-mail]: Bryan.Honof@student.pxl.be
-=======
-Vincent Claes  
-Bryan Honof
->>>>>>> fefe67d364a6030d1de4a003fd5c613eb09ae62a
