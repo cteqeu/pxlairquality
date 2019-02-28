@@ -16,4 +16,6 @@
 #define APP_DEFS_PARTICLE_TX_PIN   19u
 #define APP_DEFS_PARTICLE_BAUD     9600u
 
+#define APP_DEFS_N_SENSORS         5u
+
 #endif/*APP_DEFS_H*/

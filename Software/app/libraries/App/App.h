@@ -12,6 +12,7 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 #include <DS3231.h>
+#include <PM3015.h>
 
 namespace pxl
 {
@@ -47,11 +48,15 @@ namespace pxl
             static uint32_t curTime;
             static uint32_t ctime;
             static bool     century;
+            static uint32_t pm1_0;
+            static uint32_t pm2_0;
+            static uint32_t pm10;
 
             ATT_NBIOT       device;
             ATT_GPS         gps;
             DS3231          rtc;
             Adafruit_BME280 bme;
+            sensors::PM3015 particleSensor;
     };
 };
 
