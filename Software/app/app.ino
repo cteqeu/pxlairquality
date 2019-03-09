@@ -1,11 +1,10 @@
-//#include <App.h>
+#include <App.h>
 #include <PM3015.h>
 #include <app_defs.h>
 
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <app_defs.h>
 #include <ATT_GPS.h>
 #include <ATT_NBIOT.h>
 #include <Wire.h>
@@ -121,7 +120,7 @@ loop()
 
     if (curTime > (ctime + DELAY_TIME))
     {
-        gps.readCoordinates();
+        gps.readCoordinates(30u);
         particleSensor.readMeasurements(&pm1_0, &pm2_5, &pm10);
         uploadData();
         printDebugData();

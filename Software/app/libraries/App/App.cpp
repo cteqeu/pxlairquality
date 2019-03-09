@@ -1,9 +1,13 @@
 #include "App.h"
 
-pxl::App::App(void) : gps(APP_DEFS_GPS_RX_PIN, APP_DEFS_GPS_TX_PIN)
+pxl::App::App(void) :
+    gps            {APP_DEFS_GPS_RX_PIN, APP_DEFS_GPS_TX_PIN},
+    device         {},
+    rtc            {},
+    bme            {},
+    particleSensor {}
 {
     /* Nothing yet */
-
 }
 
 pxl::App::~App(void)
@@ -26,7 +30,9 @@ pxl::App::printDebugData(void)
     APP_DEFS_DEBUG_STREAM.println("/* ------------ DEBUG SCREEN ------------ */");
     APP_DEFS_DEBUG_STREAM.println("/* -------------------------------------- */");
 
+
     /* Print out latest sensor readings */
+    /*
     APP_DEFS_DEBUG_STREAM.println("Latitude:    " + (const String)gps.latitude);
     APP_DEFS_DEBUG_STREAM.println("Longitude:   " + (const String)gps.longitude);
     APP_DEFS_DEBUG_STREAM.println("Temperature: " + (const String)bme.readTemperature()        + "*C");
@@ -35,6 +41,7 @@ pxl::App::printDebugData(void)
     APP_DEFS_DEBUG_STREAM.println("PM1.0: " + (const String)pm1_0 + " µg/m^3");
     APP_DEFS_DEBUG_STREAM.println("PM2.5: " + (const String)pm2_5 + " µg/m^3");
     APP_DEFS_DEBUG_STREAM.println("PM10:  " + (const String)pm10  + " µg/m^3");
+    */
 
     return;
 }
@@ -42,6 +49,7 @@ pxl::App::printDebugData(void)
 void
 pxl::App::uploadData(void)
 {
+    /*
     payload.reset();
 
     payload.map(APP_DEFS_N_SENSORS);
@@ -52,6 +60,7 @@ pxl::App::uploadData(void)
     payload.addNumber(bme.readPressure() / 100.0f,            "pressure");
 
     payload.send();
+    */
 
     return;
 }
