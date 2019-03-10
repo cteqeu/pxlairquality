@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include <SoftwareSerial.h>
-#include <app_defs.h>
+#include <app_conf.h>
 
 namespace sensors
 {
