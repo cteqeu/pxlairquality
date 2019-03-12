@@ -1,6 +1,6 @@
-#include <App.h>
+//#include <App.h>
 #include <PM3015.h>
-#include <app_defs.h>
+//#include <app_defs.h>
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -12,11 +12,11 @@
 #include <Adafruit_BME280.h>
 #include <DS3231.h>
 
-#define DEBUG_STREAM      APP_DEFS_DEBUG_STREAM
-#define MODEM_STREAM      APP_DEFS_MODEM_STREAM
-#define MODEM_ON_OFF_PIN  APP_DEFS_MODEM_ON_OFF_PIN
+#define DEBUG_STREAM      Serial
+#define MODEM_STREAM      Serial1
+#define MODEM_ON_OFF_PIN  23u
 
-#define DELAY_TIME        30000u
+#define DELAY_TIME        3000u
 #define STARTUP_DELAY     500u
 
 /* --------- GLOBALS --------- */
@@ -37,6 +37,8 @@ static uint32_t pm1_0 = 0u;
 static uint32_t pm2_5 = 0u;
 static uint32_t pm10  = 0u;
 /* --------------------------- */
+
+#define APP_DEFS_USE_CBOR  1u
 
 #if (APP_DEFS_USE_CBOR == 1u)
     #include <CborBuilder.h>
@@ -65,46 +67,6 @@ setup()
 
     DEBUG_STREAM.println("/* ---------- INITIALIZING AND CONNECTING ---------- */");
 
-    /* Initialize and connect to the uBlox SARA-N211 */
-    device.init(MODEM_STREAM, DEBUG_STREAM, MODEM_ON_OFF_PIN);
-    
-    err = device.connect();
-    if (err == true)
-    {
-        DEBUG_STREAM.println("/* ---------- CONNECTED ---------- */");
-    }
-    else
-    {
-        DEBUG_STREAM.println("/* ---------- CONNECTION FAILED ---------- */");
-        DEBUG_STREAM.println("Failed to connect to device");
-        delay(100u); /* Using a delay here otherwise the Serial stream will not have enough time to print the message */
-        exit(EXIT_FAILURE); 
-    }
-
-    /* Initialize the GPS module */
-    err = gps.readCoordinates(30u);
-    if (err != true)
-    {
-        DEBUG_STREAM.println("Coordinates read successfully.");
-    }
-    else
-    {
-        DEBUG_STREAM.println("Failed to read coordinates, sending defaults.");
-    }
-
-    /* Initialize TPH v2 module */
-    err = bme.begin();
-    if (err == true)
-    {
-        DEBUG_STREAM.println("BME sensor found");
-    }
-    else
-    {
-        DEBUG_STREAM.println("BME sensor not found");
-        delay(100u);
-        exit(EXIT_FAILURE);
-    }
-
     particleSensor.openMeasurement();
 
     DEBUG_STREAM.println("/* --------- SETUP COMPLETE ---------- */");
@@ -120,31 +82,12 @@ loop()
 
     if (curTime > (ctime + DELAY_TIME))
     {
-        gps.readCoordinates(30u);
         particleSensor.readMeasurements(&pm1_0, &pm2_5, &pm10);
-        uploadData();
         printDebugData();
 
         ctime = curTime;
     }
     
-    return;
-}
-
-void
-uploadData()
-{
-    payload.reset();
-    
-    payload.map(5);
-    payload.addParticle(pm1_0, pm2_5, pm10,    "particle-sensor");
-    payload.addGPS(gps.latitude, gps.longitude, gps.altitude, "gps");
-    payload.addNumber(bme.readTemperature(),                  "temperature");
-    payload.addNumber(bme.readHumidity(),                     "humidity");
-    payload.addNumber(bme.readPressure() / 100.0f,            "pressure");
-
-    payload.send();
-
     return;
 }
 
@@ -164,11 +107,6 @@ printDebugData()
     DEBUG_STREAM.println("/* -------------------------------------- */");
 
     /* Print out latest sensor readings */
-    DEBUG_STREAM.println("Latitude:    " + (const String)gps.latitude);
-    DEBUG_STREAM.println("Longitude:   " + (const String)gps.longitude);
-    DEBUG_STREAM.println("Temperature: " + (const String)bme.readTemperature()        + "*C");
-    DEBUG_STREAM.println("Humidity:    " + (const String)bme.readHumidity()           + "%");
-    DEBUG_STREAM.println("Pressure:    " + (const String)(bme.readPressure() / 100.f) + "hPa");
     DEBUG_STREAM.println("PM1.0: " + (const String)pm1_0 + " µg/m^3");
     DEBUG_STREAM.println("PM2.5: " + (const String)pm2_5 + " µg/m^3");
     DEBUG_STREAM.println("PM10:  " + (const String)pm10  + " µg/m^3");

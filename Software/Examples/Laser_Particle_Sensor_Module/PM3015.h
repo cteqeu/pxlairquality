@@ -2,9 +2,10 @@
 #define PM3015_H
 
 #include <Arduino.h>
-#include <stdint.h>
 #include <SoftwareSerial.h>
-#include <app_conf.h>
+
+#include <stdint.h>
+#include "conf.h"
 
 namespace sensors
 {
@@ -32,10 +33,7 @@ namespace sensors
             uint8_t getMeasurement(void);
             uint8_t openMeasurement();
             uint8_t closeMeasurement();
-            uint8_t readMeasurements(uint32_t *pm1_0, \
-                                     uint32_t *pm2_5, \
-                                     uint32_t *pm10   \
-                                    );
+            uint8_t readMeasurements(uint32_t *pm1_0, uint32_t *pm2_5, uint32_t *pm10);
 
         private:
             uint8_t isDataValid(const uint8_t *data, size_t size);

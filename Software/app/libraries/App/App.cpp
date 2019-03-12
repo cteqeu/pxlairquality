@@ -1,11 +1,18 @@
 #include "App.h"
 
 pxl::App::App(void) :
-    gps            {APP_DEFS_GPS_RX_PIN, APP_DEFS_GPS_TX_PIN},
-    device         {},
-    rtc            {},
-    bme            {},
-    particleSensor {}
+    pm1_0         (0u),
+    pm2_5         (0u),
+    pm10          (0u),
+    curTime       (0u),
+    ctime         (0u),
+    century       (false),
+    device        (),
+    gps           (APP_CONF_GPS_RX_PIN, APP_CONF_GPS_TX_PIN),
+    rtc           (),
+    bme           (),
+    particleSensor(),
+    payload       (device)
 {
     /* Nothing yet */
 }
@@ -16,32 +23,84 @@ pxl::App::~App(void)
 }
 
 void
+pxl::App::setup(void)
+{
+    volatile static bool err = false;
+
+    delay(APP_CONF_STARTUP_DELAY);
+    pinMode(LED1,          OUTPUT);
+    pinMode(GROVEPWR,      OUTPUT);
+    digitalWrite(GROVEPWR, HIGH);
+
+    Wire.begin();
+    DEBUG_STREAM.begin(APP_CONF_DEBUG_STREAM_BAUD);
+    MODEM_STREAM.begin(APP_CONF_MODEM_STREAM_BAUD);
+
+    DEBUG_STREAM.println("/* ----- INITIALIZING AND CONNECTING ----- */");
+    device.init(MODEM_STREAM, DEBUG_STREAM, APP_CONF_MODEM_ON_OFF_PIN);
+
+    err = device.connect();
+    if(err != true)
+    {
+        DEBUG_STREAM.println("/* ---------- CONNECTION FAILED ---------- */");
+        DEBUG_STREAM.println("Failed to connect to device");
+        delay(100u); /* Using a delay here otherwise the Serial stream will not have enough time to print the message */
+        exit(EXIT_FAILURE);
+    }
+    DEBUG_STREAM.println("/* ---------- CONNECTED ---------- */");
+
+    err = gps.readCoordinates(30u);
+    if(err == true)
+    {
+        DEBUG_STREAM.println("Failed to read coordinates, sending defaults.");
+    }
+    DEBUG_STREAM.println("Coordinates read successfully.");
+
+    err = bme.begin();
+    if(err != true)
+    {
+        DEBUG_STREAM.println("BME sensor not found");
+    }
+    DEBUG_STREAM.println("BME sensor found");
+
+    particleSensor.openMeasurement();
+
+    DEBUG_STREAM.println("/* --------- SETUP COMPLETE ---------- */");
+
+    return;
+}
+
+void
+pxl::App::loop(void)
+{
+    return;
+}
+
+void
 pxl::App::printDebugData(void)
 {
     /* Clear the terminal screen */
-    APP_DEFS_DEBUG_STREAM.write(27);
-    APP_DEFS_DEBUG_STREAM.print("[2J");
-    APP_DEFS_DEBUG_STREAM.write(27);
-    APP_DEFS_DEBUG_STREAM.print("[H");
+    DEBUG_STREAM.write(27);
+    DEBUG_STREAM.print("[2J");
+    DEBUG_STREAM.write(27);
+    DEBUG_STREAM.print("[H");
 
     /* Print the name of the program */
-    APP_DEFS_DEBUG_STREAM.println("/* -------------------------------------- */");
-    APP_DEFS_DEBUG_STREAM.println("/* ---------- PXL AIR QUALLITY ---------- */");
-    APP_DEFS_DEBUG_STREAM.println("/* ------------ DEBUG SCREEN ------------ */");
-    APP_DEFS_DEBUG_STREAM.println("/* -------------------------------------- */");
+    DEBUG_STREAM.println("/* -------------------------------------- */");
+    DEBUG_STREAM.println("/* ---------- PXL AIR QUALLITY ---------- */");
+    DEBUG_STREAM.println("/* ------------ DEBUG SCREEN ------------ */");
+    DEBUG_STREAM.println("/* -------------------------------------- */");
 
 
     /* Print out latest sensor readings */
-    /*
-    APP_DEFS_DEBUG_STREAM.println("Latitude:    " + (const String)gps.latitude);
-    APP_DEFS_DEBUG_STREAM.println("Longitude:   " + (const String)gps.longitude);
-    APP_DEFS_DEBUG_STREAM.println("Temperature: " + (const String)bme.readTemperature()        + "*C");
-    APP_DEFS_DEBUG_STREAM.println("Humidity:    " + (const String)bme.readHumidity()           + "%");
-    APP_DEFS_DEBUG_STREAM.println("Pressure:    " + (const String)(bme.readPressure() / 100.f) + "hPa");
-    APP_DEFS_DEBUG_STREAM.println("PM1.0: " + (const String)pm1_0 + " µg/m^3");
-    APP_DEFS_DEBUG_STREAM.println("PM2.5: " + (const String)pm2_5 + " µg/m^3");
-    APP_DEFS_DEBUG_STREAM.println("PM10:  " + (const String)pm10  + " µg/m^3");
-    */
+    DEBUG_STREAM.println("Latitude:    " + (const String)gps.latitude);
+    DEBUG_STREAM.println("Longitude:   " + (const String)gps.longitude);
+    DEBUG_STREAM.println("Temperature: " + (const String)bme.readTemperature()        + "*C");
+    DEBUG_STREAM.println("Humidity:    " + (const String)bme.readHumidity()           + "%");
+    DEBUG_STREAM.println("Pressure:    " + (const String)(bme.readPressure() / 100.f) + "hPa");
+    DEBUG_STREAM.println("PM1.0: " + (const String)pm1_0 + " µg/m^3");
+    DEBUG_STREAM.println("PM2.5: " + (const String)pm2_5 + " µg/m^3");
+    DEBUG_STREAM.println("PM10:  " + (const String)pm10  + " µg/m^3");
 
     return;
 }
@@ -49,10 +108,9 @@ pxl::App::printDebugData(void)
 void
 pxl::App::uploadData(void)
 {
-    /*
     payload.reset();
 
-    payload.map(APP_DEFS_N_SENSORS);
+    payload.map(APP_CONF_N_SENSORS);
     payload.addParticle(pm1_0, pm2_5, pm10,                   "particle-sensor");
     payload.addGPS(gps.latitude, gps.longitude, gps.altitude, "gps");
     payload.addNumber(bme.readTemperature(),                  "temperature");
@@ -60,7 +118,6 @@ pxl::App::uploadData(void)
     payload.addNumber(bme.readPressure() / 100.0f,            "pressure");
 
     payload.send();
-    */
 
     return;
 }
