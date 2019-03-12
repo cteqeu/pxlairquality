@@ -18,9 +18,9 @@ static typedef enum eCommands
 };
 */
 
-sensors::PM3015::PM3015() : particleSerial(APP_CONF_PARTICLE_RX_PIN, APP_CONF_PARTICLE_TX_PIN)
+sensors::PM3015::PM3015() : particleSerial(CONF_PARTICLE_RX_PIN, CONF_PARTICLE_TX_PIN)
 {
-    this->baudRate = APP_CONF_PARTICLE_BAUD;
+    this->baudRate = CONF_PARTICLE_BAUD;
     particleSerial.begin(baudRate);
     particleSerial.setTimeout(1000);
 }
