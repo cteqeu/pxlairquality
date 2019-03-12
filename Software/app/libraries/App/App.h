@@ -2,8 +2,8 @@
 #define APP_H
 
 #include <app_conf.h>
-#define MODEM_STREAM APP_CONF_MODEM_STREAM
-#define DEBUG_STREAM APP_CONF_DEBUG_STREAM
+#define MODEM_STREAM  APP_CONF_MODEM_STREAM
+#define DEBUG_STREAM  APP_CONF_DEBUG_STREAM
 
 #include <Arduino.h>
 #include <Wire.h>

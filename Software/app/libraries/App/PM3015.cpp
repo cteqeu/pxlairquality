@@ -1,5 +1,22 @@
 #include "PM3015.h"
 
+static typedef enum eCommands
+{
+    READ_PARTICLE_MEASUREMENT_RESULT            = 0u,
+    OPEN_PARTICLE_MEASUREMENT                   = 1u,
+    CLOSE_PARTICLE_MEASUREMENT                  = 2u,
+    SET_UP_MEASURING_TIME                       = 3u,
+    READ_MEASURING_TIME                         = 4u,
+    SET_UP_TIMING_MEASURING_MODE                = 5u,
+    SET_UP_DYNAMIC_MEASURING_MODE               = 6u,
+    SET_UP_READ_PARTICLE_CALIBRATED_COEFFICIENT = 7u,
+    CLOSE_LASER_DIODE                           = 8u,
+    OPEN_LASER_DIODE                            = 9u,
+    READ_SOFTWARE_VERSION_NUMBER                = 10u,
+    READ_SERIAL_NUMBER                          = 11u,
+};
+
+
 sensors::PM3015::PM3015() : particleSerial(APP_CONF_PARTICLE_RX_PIN, APP_CONF_PARTICLE_TX_PIN)
 {
     this->baudRate = APP_CONF_PARTICLE_BAUD;

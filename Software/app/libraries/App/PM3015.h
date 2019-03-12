@@ -9,18 +9,18 @@
 namespace sensors
 {
     enum commands {
-        PM3015_READ_PARTICLE_MEASUREMENT_RESULT = 0x0u,
-        PM3015_OPEN_PARTICLE_MEASUREMENT,
-        PM3015_CLOSE_PARTICLE_MEASUREMENT,
-        PM3015_SET_UP_MEASURING_TIME,
-        PM3015_READ_MEASURING_TIME,
-        PM3015_SET_UP_TIMING_MEASURING_MODE,
-        PM3015_SET_UP_DYNAMIC_MEASURING_MODE,
-        PM3015_SET_UP_READ_PARTICLE_CALIBRATED_COEFFICIENT,
-        PM3015_CLOSE_LASER_DIODE,
-        PM3015_OPEN_LASER_DIODE,
-        PM3015_READ_SOFTWARE_VERSION_NUMBER,
-        PM3015_READ_SERIAL_NUMBER,
+        READ_PARTICLE_MEASUREMENT_RESULT            = 0u,
+        OPEN_PARTICLE_MEASUREMENT                   = 1u,
+        CLOSE_PARTICLE_MEASUREMENT                  = 2u,
+        SET_UP_MEASURING_TIME                       = 3u,
+        READ_MEASURING_TIME                         = 4u,
+        SET_UP_TIMING_MEASURING_MODE                = 5u,
+        SET_UP_DYNAMIC_MEASURING_MODE               = 6u,
+        SET_UP_READ_PARTICLE_CALIBRATED_COEFFICIENT = 7u,
+        CLOSE_LASER_DIODE                           = 8u,
+        OPEN_LASER_DIODE                            = 9u,
+        READ_SOFTWARE_VERSION_NUMBER                = 10u,
+        READ_SERIAL_NUMBER                          = 11u,
     };
 
     class PM3015
