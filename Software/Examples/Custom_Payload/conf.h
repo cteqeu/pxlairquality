@@ -1,7 +1,7 @@
 #ifndef CONF_H
 #define CONF_H
 
-#define DELAY_TIME              5000u
+#define DELAY_TIME              50000u
 
 #define DEBUG_STREAM            Serial
 #define MODEM_STREAM            Serial1

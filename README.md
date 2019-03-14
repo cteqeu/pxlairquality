@@ -1,23 +1,23 @@
-# PXL University College NB-IoT Air Quality Project 
+# Hogeschool PXL NB-IoT Air Quality Project 
 
 [![PXL University College Logo][PXL-logo]][PXL-link]
 
-## Table of Contents
+## Inhoudstafel
 
-## Introduction
+## Introductie
 
-Repository for the PXL NB-IoT Air Quality Project.
+Repository voor het PXL NB-IoT Air Quality Project.
 
 ## Source Roadmap 
 
 ```
-General   Contains the slides, data sheets, ... .
+General   Bevat de slides, data sheets, ... .
 
-Hardware  Contains information about the hardware.
+Hardware  Bevat informatie over de hardware.
 
-Misc      Contains miscellaneous items like images.
+Misc      Bavat extra bestanden zoals foto's.
 
-Software  Contains information about the software, example projects,...
+Software  Bevast informatie over de software en voorbeeld programms, ... .
 ```
 
 ## Contributors
