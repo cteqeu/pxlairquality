@@ -1,0 +1,29 @@
+{
+    "name": "PXL Air Quality Heroku Node-RED",
+
+    "description": "Heroku Node-RED instance for heroku.",
+
+    "keywords": [ "Node-RED", "IoT", "Internet of Things", "node.js", "node", "PXL", "Air", "Quality" ],
+
+    "website": "https://github.com/pxltech/pxlairquality",
+
+    "repository": "https://github.com/pxltech/pxlairquality",
+
+    "logo": "https://github.com/pxltech/pxlairquality/blob/master/Misc/images/pxl-logo.png",
+
+    "success_url": "/",
+
+    "env": {
+        "NODE_RED_USERNAME": {
+            "description": "The username to secure the editor.",
+            "value": ""
+        },
+ 
+        "NODE_RED_PASSWORD": {
+            "description": "The password to secure the editor.",
+            "value": ""
+        }
+   },
+
+    "addons": [ "heroku-postgresql" ]
+}
