@@ -74,7 +74,7 @@ uploadSensorValues(void)
 {
     payload->reset();
     payload->map(1);
-    payload->addParticle(PM1_0, PM2_5, PM10, (const String)"particle-sensor");
+    payload->addParticle(PM1_0, PM2_5, PM10, (const String)"particle_sensor");
     payload->send();
 
     return;
