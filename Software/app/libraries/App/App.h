@@ -29,10 +29,12 @@ namespace pxl
              App(void);
             ~App(void);
 
-            void setup         (void);
-            void loop          (void);
-            void uploadData    (void);
-            void printDebugData(void);
+            void    setup         (void);
+            void    loop          (void);
+            void    updateData    (void);
+            void    uploadData    (void);
+            void    printDebugData(void);
+            uint8_t getBattLevel  (void);
 
             /* ----------  Getters ---------- */
 

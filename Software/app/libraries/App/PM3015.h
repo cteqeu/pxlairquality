@@ -27,7 +27,6 @@ namespace sensors
     {
         public:
             PM3015(void);
-            ~PM3015(void);
 
             uint8_t getMeasurement(void);
             uint8_t openMeasurement();

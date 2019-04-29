@@ -25,11 +25,6 @@ sensors::PM3015::PM3015() : particleSerial(APP_CONF_PARTICLE_RX_PIN, APP_CONF_PA
     particleSerial.setTimeout(1000);
 }
 
-sensors::PM3015::~PM3015()
-{
-
-}
-
 uint8_t sensors::PM3015::openMeasurement()
 {
     uint8_t openResponse[5];

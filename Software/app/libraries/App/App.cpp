@@ -8,7 +8,7 @@ pxl::App::App(void) :
     ctime         (0u),
     century       (false),
     device        (),
-    gps           (APP_CONF_GPS_RX_PIN, APP_CONF_GPS_TX_PIN),
+    gps           (20, 21),
     rtc           (),
     bme           (),
     particleSensor(),
@@ -49,8 +49,9 @@ pxl::App::setup(void)
     }
     DEBUG_STREAM.println("/* ---------- CONNECTED ---------- */");
 
-    err = gps.readCoordinates(30u);
-    if(err == true)
+    DEBUG_STREAM.println("/* ---------- GETTING GPS FIX ---------- */");
+    err = gps.readCoordinates(10u);
+    if(err != true)
     {
         DEBUG_STREAM.println("Failed to read coordinates, sending defaults.");
     }
@@ -61,7 +62,10 @@ pxl::App::setup(void)
     {
         DEBUG_STREAM.println("BME sensor not found");
     }
-    DEBUG_STREAM.println("BME sensor found");
+    else
+    {
+        DEBUG_STREAM.println("BME sensor found");
+    }
 
     particleSensor.openMeasurement();
 
@@ -73,6 +77,19 @@ pxl::App::setup(void)
 void
 pxl::App::loop(void)
 {
+    updateData();
+    uploadData();
+    printDebugData();
+
+    return;
+}
+
+void
+pxl::App::updateData(void)
+{
+    particleSensor.readMeasurements(&pm1_0, &pm2_5, &pm10);
+    //gps.readCoordinates();
+
     return;
 }
 
@@ -91,6 +108,7 @@ pxl::App::printDebugData(void)
     DEBUG_STREAM.println("/* ------------ DEBUG SCREEN ------------ */");
     DEBUG_STREAM.println("/* -------------------------------------- */");
 
+    DEBUG_STREAM.println("BattLevel = " + (const String)(getBattLevel()));
 
     /* Print out latest sensor readings */
     DEBUG_STREAM.println("Latitude:    " + (const String)gps.latitude);
@@ -108,10 +126,12 @@ pxl::App::printDebugData(void)
 void
 pxl::App::uploadData(void)
 {
+
+    DEBUG_STREAM.println("/* STARTING UPLOAD */");
     payload.reset();
 
     payload.map(APP_CONF_N_SENSORS);
-    payload.addParticle(pm1_0, pm2_5, pm10,                   "particle-sensor");
+    payload.addParticle(pm1_0, pm2_5, pm10,                   "particle_sensor");
     payload.addGPS(gps.latitude, gps.longitude, gps.altitude, "gps");
     payload.addNumber(bme.readTemperature(),                  "temperature");
     payload.addNumber(bme.readHumidity(),                     "humidity");
@@ -120,4 +140,12 @@ pxl::App::uploadData(void)
     payload.send();
 
     return;
+}
+
+uint8_t
+pxl::App::getBattLevel(void)
+{
+    uint8_t level = analogRead(A6);
+
+    return level;
 }
