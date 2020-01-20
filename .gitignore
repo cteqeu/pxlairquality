@@ -1,2 +1,8 @@
 General/Slides/.build
 .DS_Store
+
+Software/Arduino Libraries/arduino-nbiot-rdk
+
+Software/Arduino Libraries/arduino-nbiot-sdk
+
+Software/pxlairquality-heroku-nodered
